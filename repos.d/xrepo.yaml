@@ -1,0 +1,30 @@
+###########################################################################
+# xrepo (xmake-repo)
+###########################################################################
+- name: xrepo
+  type: repository
+  desc: xrepo
+  family: xrepo
+  ruleset: xrepo
+  minpackages: 1000
+  sources:
+    - name: xmake-repo
+      fetcher:
+        class: GitFetcher
+        url: https://github.com/xmake-io/xmake-repo.git
+        sparse_checkout: [ 'packages/**/xmake.lua' ]
+      parser:
+        class: XrepoGitParser
+  repolinks:
+    - desc: xrepo website
+      url: https://xrepo.xmake.io/
+    - desc: xmake-repo on GitHub
+      url: https://github.com/xmake-io/xmake-repo
+  packagelinks:
+    - type: PACKAGE_SOURCES
+      url: 'https://github.com/xmake-io/xmake-repo/tree/master/packages/{letter}/{srcname}'
+    - type: PACKAGE_RECIPE
+      url: 'https://github.com/xmake-io/xmake-repo/blob/master/packages/{letter}/{srcname}/xmake.lua'
+    - type: PACKAGE_RECIPE_RAW
+      url: 'https://raw.githubusercontent.com/xmake-io/xmake-repo/master/packages/{letter}/{srcname}/xmake.lua'
+  groups: [ all, production ]
