@@ -52,23 +52,30 @@ class XrepoGitParser(Parser):
             except OSError:
                 continue
 
+            _str = r'"((?:\\.|[^"\\])*)"'
+
             # package name is the first argument to package()
-            name_match = re.search(r'^package\("([^"]+)"\)', content, re.MULTILINE)
+            name_match = re.search(r'^package\s*\(\s*' + _str + r'\s*\)', content, re.MULTILINE)
             if name_match is None:
                 continue
-            pkgname = name_match.group(1)
+            pkgname = _parse_lua_string(name_match.group(1))
 
-            versions = re.findall(r'add_versions\("([^"]+)",\s*"[0-9a-f]+"\)', content)
+            # findall with two groups returns (version, checksum) tuples
+            versions = [
+                _parse_lua_string(ver)
+                for ver, _ in re.findall(r'add_versions\s*\(\s*' + _str + r'\s*,\s*' + _str + r'\s*\)', content)
+            ]
             if not versions:
                 continue
 
-            homepage_match = re.search(r'set_homepage\("([^"]+)"\)', content)
-            description_match = re.search(r'set_description\("([^"]+)"\)', content)
-            license_match = re.search(r'set_license\("([^"]+)"\)', content)
+            homepage_match = re.search(r'set_homepage\s*\(\s*' + _str + r'\s*\)', content)
+            description_match = re.search(r'set_description\s*\(\s*' + _str + r'\s*\)', content)
+            license_match = re.search(r'set_license\s*\(\s*' + _str + r'\s*\)', content)
 
             with factory.begin(rel_path) as pkg:
                 pkg.add_name(pkgname, NameType.XREPO_NAME)
                 pkg.set_extra_field('letter', pkgname[0].lower())
+                pkg.set_extra_field('xrepo_package_path', os.path.dirname(rel_path).replace(os.sep, '/'))
 
                 if homepage_match:
                     pkg.add_links(LinkType.UPSTREAM_HOMEPAGE, _parse_lua_string(homepage_match.group(1)))
@@ -77,7 +84,7 @@ class XrepoGitParser(Parser):
                     pkg.set_summary(_parse_lua_string(description_match.group(1)))
 
                 if license_match:
-                    pkg.add_licenses(license_match.group(1))
+                    pkg.add_licenses(_parse_lua_string(license_match.group(1)))
 
                 for version in versions:
                     verpkg = pkg.clone(append_ident=':' + version)

@@ -22,9 +22,9 @@
       url: https://github.com/xmake-io/xmake-repo
   packagelinks:
     - type: PACKAGE_SOURCES
-      url: 'https://github.com/xmake-io/xmake-repo/tree/master/packages/{letter}/{srcname}'
+      url: 'https://github.com/xmake-io/xmake-repo/tree/dev/{xrepo_package_path}'
     - type: PACKAGE_RECIPE
-      url: 'https://github.com/xmake-io/xmake-repo/blob/master/packages/{letter}/{srcname}/xmake.lua'
+      url: 'https://github.com/xmake-io/xmake-repo/blob/dev/{xrepo_package_path}/xmake.lua'
     - type: PACKAGE_RECIPE_RAW
-      url: 'https://raw.githubusercontent.com/xmake-io/xmake-repo/master/packages/{letter}/{srcname}/xmake.lua'
+      url: 'https://raw.githubusercontent.com/xmake-io/xmake-repo/dev/{xrepo_package_path}/xmake.lua'
   groups: [ all, production ]
